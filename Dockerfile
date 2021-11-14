@@ -8,7 +8,7 @@ ARG SEGMENTS_SEC
 ARG DELETE_SEGMENTS_OLD_MINS
 ARG DELETE_SEGMENTS_INTERVAL_MINS
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
 COPY . .
 
@@ -24,10 +24,10 @@ RUN npm cache clean --force
 FROM node:14-alpine AS runtime
 ENV NODE_ENV=production
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./
-COPY --from=build /app/build ./build
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/package.json ./
+COPY --from=build /usr/src/app/build ./build
 
 CMD [ "npm", "run", "start" ]

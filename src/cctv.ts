@@ -34,6 +34,9 @@ const cctv = async () => {
   ]);
 
   const segmentsProcess = exec(segmentsCommand, { maxBuffer: 1024 * 1024 })
+    .on('spawn', () => {
+      console.error('Process started');
+    })
     .on('error', (err) => {
       console.error('Segments command error: ', err);
     });

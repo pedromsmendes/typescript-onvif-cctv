@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "env-cmd -f .env.dev nodemon",
-    "start": "env-cmd -f .env node build/index.js",
+    "dev:start": "env-cmd -f .env.dev node build/index.js",
+    "start": "node build/index.js",
     "build": "tsc --project tsconfig.build.json",
     "test": "env-cmd -f .env.test echo \"Error: no test specified\" && exit 1",
     "lint": "tsc --noEmit && eslint src --ext .ts --fix"
@@ -23,7 +24,6 @@
     "@types/node": "^16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
-    "env-cmd": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "nodemon": "^2.0.14",
@@ -32,6 +32,7 @@
     "typescript-eslint": "^0.0.1-alpha.0"
   },
   "dependencies": {
+    "env-cmd": "^10.1.0",
     "any-shell-escape": "^0.1.1",
     "dayjs": "^1.10.7",
     "ffmpeg-static": "^4.4.0"
