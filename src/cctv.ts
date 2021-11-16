@@ -1,9 +1,8 @@
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import fsAsync from 'fs/promises';
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 
-import shell from 'any-shell-escape';
 import dayjs, { Dayjs } from 'dayjs';
 
 import createDirAsync from './helpers/createDirAsync';
@@ -20,26 +19,31 @@ const cctv = async () => {
   await createDirAsync(segmentsPath, true);
 
   const url = `rtmp://${host}/bcs/channel0_main.bcs?channel=0&stream=0&user=${username}&password=${password}`;
-  const segmentsCommand = shell([
-    ffmpeg,
+
+  const segmentsArgs = [
     '-i', url,
     '-acodec', 'copy',
     '-vcodec', 'copy',
     '-f', 'segment',
     '-strftime', '1',
-    '-segment_time', segmentSecs,
+    '-segment_time', `${segmentSecs}`,
     '-segment_format', 'mp4',
     '-reset_timestamps', '1',
     path.join(segmentsPath, '%Y-%m-%d_%H-%M-%S.mp4'),
-  ]);
+  ];
 
-  const segmentsProcess = exec(segmentsCommand, { maxBuffer: 1024 * 1024 })
-    .on('spawn', () => {
-      console.error('Process started');
-    })
-    .on('error', (err) => {
-      console.error('Segments command error: ', err);
-    });
+  const segmentsProcess = spawn(ffmpeg, segmentsArgs);
+
+  // segmentsProcess.stdout.on('data', (data) => {
+  //   console.log('STDOUT: ', data);
+  // });
+  // segmentsProcess.stderr.setEncoding('utf8');
+  // segmentsProcess.stderr.on('data', (data) => {
+  //   console.log('DATA: ', data);
+  // });
+  segmentsProcess.on('close', () => {
+    console.log('Process stopped');
+  });
 
   const mergeClips = async () => {
     const currentHour = dayjs().startOf('hour');
@@ -88,21 +92,20 @@ const cctv = async () => {
 
         const recordFile = path.join(
           curRecordPath,
-          `${previousHour.format('YYYY-DD-MM_HH-mm-ss')}.mp4`,
+          `${previousHour.format('YYYY-MM-DD_HH-mm-ss')}.mp4`,
         );
 
         try {
-          const command = shell([
-            ffmpeg,
+          const mergeArgs = [
             '-f', 'concat',
-            '-safe', 0,
+            '-safe', '0',
             '-i', segmentsToMergeFile,
             '-acodec', 'copy',
             '-vcodec', 'copy',
             recordFile,
-          ]);
+          ];
 
-          const mergeProcess = exec(command)
+          const mergeProcess = spawn(ffmpeg, mergeArgs)
             .on('spawn', () => {
               mergeProcessesArray.push(mergeProcess);
             })

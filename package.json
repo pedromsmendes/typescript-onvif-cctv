@@ -32,9 +32,8 @@
     "typescript-eslint": "^0.0.1-alpha.0"
   },
   "dependencies": {
-    "env-cmd": "^10.1.0",
-    "any-shell-escape": "^0.1.1",
     "dayjs": "^1.10.7",
+    "env-cmd": "^10.1.0",
     "ffmpeg-static": "^4.4.0"
   }
 }
