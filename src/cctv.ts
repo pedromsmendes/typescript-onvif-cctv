@@ -9,7 +9,7 @@ import createDirAsync from './helpers/createDirAsync';
 import removeDirAsync from './helpers/removeDirAsync';
 
 import {
-  deleteSegmentsAgeMins, deleteSegmentsIntervalMins, host, password, mergeProcessesArray,
+  deleteSegmentsAgeMins, deleteSegmentsIntervalMins, hostname, password, mergeProcessesArray,
   recordingsPath, segmentSecs, segmentsPath, segmentsToMergeFile, username,
 } from './globals';
 
@@ -18,7 +18,7 @@ const cctv = async () => {
 
   await createDirAsync(segmentsPath, true);
 
-  const url = `rtmp://${host}/bcs/channel0_main.bcs?channel=0&stream=0&user=${username}&password=${password}`;
+  const url = `rtmp://${hostname}/bcs/channel0_main.bcs?channel=0&stream=0&user=${username}&password=${password}`;
 
   const segmentsArgs = [
     '-i', url,
@@ -34,15 +34,12 @@ const cctv = async () => {
 
   const segmentsProcess = spawn(ffmpeg, segmentsArgs);
 
-  // segmentsProcess.stdout.on('data', (data) => {
-  //   console.log('STDOUT: ', data);
-  // });
-  // segmentsProcess.stderr.setEncoding('utf8');
-  // segmentsProcess.stderr.on('data', (data) => {
-  //   console.log('DATA: ', data);
-  // });
+  segmentsProcess.stderr.setEncoding('utf8');
+  segmentsProcess.on('spawn', () => {
+    console.log('>> Started recording');
+  });
   segmentsProcess.on('close', () => {
-    console.log('Process stopped');
+    console.log('>> Stopped recording');
   });
 
   const mergeClips = async () => {
@@ -149,7 +146,7 @@ const cctv = async () => {
     }
 
     if (deleteCount) {
-      console.log(`Deleted ${deleteCount} segments`);
+      // console.log(`Deleted ${deleteCount} segments`);
     }
   };
 

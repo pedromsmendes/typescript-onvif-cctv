@@ -10,6 +10,7 @@ export const recordingsPath = path.join(process.cwd(), 'recordings');
 export const segmentsPath = path.join(process.cwd(), 'segments');
 export const segmentsToMergeFile = path.join(segmentsPath, 'segmentsToMerge.txt');
 
-export const host = process.env.CAM_HOST!;
+export const hostname = process.env.CAM_HOST!;
+export const port = process.env.CAM_PORT!;
 export const username = process.env.CAM_USERNAME!;
 export const password = process.env.CAM_PASSWORD!;

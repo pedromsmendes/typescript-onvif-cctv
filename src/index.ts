@@ -3,14 +3,18 @@ import cctv from './cctv';
 import { mergeProcessesArray } from './globals';
 
 import validateVariables from './helpers/validateVariables';
+import motionDetection from './motionDetection';
 
 (async () => {
   validateVariables();
 
   const cctvProcess = await cctv();
 
+  const motionProcess = await motionDetection();
+
   const closeProcesses = () => {
     cctvProcess.kill();
+    motionProcess.close();
     mergeProcessesArray.forEach((process) => {
       process.kill();
     });
